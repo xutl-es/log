@@ -26,7 +26,6 @@ export class Pattern {
 		this.#id = parts.join(':');
 		const regp = parts.map(patternExpression).join(':');
 		this.#expression = new RegExp(`^${regp}$`);
-		console.error(this.#id, ' <=> ', this.#expression);
 	}
 	get id() {
 		return this.#id;
@@ -36,7 +35,7 @@ export class Pattern {
 	}
 	resolve(realm: Realm, item: string) {
 		const parts = splitRealm(realm);
-		return item.replaceAll(REP, (sub, idx) => parts[idx] ?? sub);
+		return item.replaceAll(REP, (sub, idx) => parts[idx + 1] ?? sub);
 	}
 	static cleanPattern(pattern: string): Realm {
 		return splitRealm(pattern).map(cleanPatternPart).join(':');

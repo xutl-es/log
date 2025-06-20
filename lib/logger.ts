@@ -36,10 +36,18 @@ export class Logger<Meta extends MetaData> {
 	constructor(metadata: Meta) {
 		this.#metadata = metadata;
 	}
-	#patterns: Record<string, { pattern: Pattern; format: Format<Meta>; destination: string; pipemode: PipeMode }> = {};
-	add(pattern: string, destination: string, format: Format<Meta>, pipemode: PipeMode) {
+	#patterns: Record<string, { pattern: Pattern; destination: string; format: Format<Meta>; pipemode: PipeMode }> = {};
+	add(
+		pattern: string,
+		destination: string = 'stderr',
+		format: Format<Meta> = new Format<Meta>(
+			['stderr', 'stdout'].includes(destination) ? Formats.Console : Formats.JSONLog,
+			{},
+		),
+		mode: PipeModes = 'STREAM',
+	) {
 		const id = Pattern.cleanPattern(pattern);
-		this.#patterns[id] = { pattern: new Pattern(pattern), format, destination, pipemode };
+		this.#patterns[id] = { pattern: new Pattern(pattern), format, destination, pipemode: LogPipe[mode] };
 	}
 	delete(pattern: string) {
 		delete this.#patterns[Pattern.cleanPattern(pattern)];
@@ -55,85 +63,31 @@ export class Logger<Meta extends MetaData> {
 			pipe.write(line);
 		}
 	}
-	create(realm: Realm) {
-		return (message: string, ...args: unknown[]) =>
-			this.#write({
-				timestamp: Date.now(),
-				realm,
-				message,
-				arguments: args,
-				metadata: this.#metadata,
-			});
-	}
 	[Symbol.dispose]() {
 		for (const pipe of Object.values(this.#pipes)) {
 			pipe[Symbol.dispose]();
 		}
 		this.#pipes = {};
 	}
-	debug(message: string, ...args: unknown[]) {
+	log(realm: Realm, message: string, ...args: any[]) {
 		return this.#write({
 			timestamp: Date.now(),
-			realm: 'debug',
+			realm,
 			message,
 			arguments: args,
 			metadata: this.#metadata,
 		});
 	}
-	trace(message: string, ...args: unknown[]) {
-		this.#write({
-			timestamp: Date.now(),
-			realm: 'trace',
-			message,
-			arguments: args,
-			metadata: this.#metadata,
-		});
+	create(realm: Realm) {
+		return this.log.bind(this, realm);
 	}
-	info(message: string, ...args: unknown[]) {
-		this.#write({
-			timestamp: Date.now(),
-			realm: 'info',
-			message,
-			arguments: args,
-			metadata: this.#metadata,
-		});
-	}
-	state(message: string, state: any, ...args: unknown[]) {
-		this.#write({
-			timestamp: Date.now(),
-			realm: 'state',
-			message,
-			arguments: [...args, state],
-			metadata: this.#metadata,
-		});
-	}
-	warn(message: string, ...args: unknown[]) {
-		this.#write({
-			timestamp: Date.now(),
-			realm: 'warn',
-			message,
-			arguments: args,
-			metadata: this.#metadata,
-		});
-	}
-	error(message: string, ...args: unknown[]) {
-		this.#write({
-			timestamp: Date.now(),
-			realm: 'error',
-			message,
-			arguments: args,
-			metadata: this.#metadata,
-		});
-	}
-	fatal(message: string, ...args: unknown[]) {
-		this.#write({
-			timestamp: Date.now(),
-			realm: 'fatal',
-			message,
-			arguments: args,
-			metadata: this.#metadata,
-		});
-	}
+	debug = this.create('debug');
+	trace = this.create('trace');
+	info = this.create('info');
+	state = this.create('state');
+	warn = this.create('warn');
+	error = this.create('error');
+
 	static define<Meta extends MetaData>(metadata: Meta, cfg: LoggerConfig = {}) {
 		const logger = new Logger(metadata);
 		for (const [pattern, { format = 'JSONLog', destination, mode = 'STREAM', options }] of Object.entries({
