@@ -1,6 +1,6 @@
 {
 	"name": "@xutl/log",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "Logging Utility",
 	"type": "module",
 	"main": "./lib/index.js",
@@ -19,13 +19,21 @@
 	"bin": {
 		"log": "./dist/merge.js"
 	},
-	"files": ["README.md", "dist/**/*.js", "dist/**/*.d.ts"],
+	"files": [
+		"README.md",
+		"dist/**/*.js",
+		"dist/**/*.d.ts"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pipobscure/piplog.git"
 	},
-	"keywords": ["logging"],
-	"contributors": ["Philipp Dunkel <pip@pipobscure.com>"],
+	"keywords": [
+		"logging"
+	],
+	"contributors": [
+		"Philipp Dunkel <pip@pipobscure.com>"
+	],
 	"license": "ISC",
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
