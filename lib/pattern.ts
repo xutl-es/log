@@ -26,6 +26,7 @@ export class Pattern {
 		this.#id = parts.join(':');
 		const regp = parts.map(patternExpression).join(':');
 		this.#expression = new RegExp(`^${regp}$`);
+		console.error(this.#id, ' <=> ', this.#expression);
 	}
 	get id() {
 		return this.#id;
@@ -53,21 +54,21 @@ function splitRealm(realm: Realm) {
 		.filter((p) => !!p);
 }
 function cleanRealmPart(part: string) {
-	if (/^[a..z0..9]+^/.test(part)) return part;
+	if (/^[a-z0-9]+$/.test(part)) return part;
 	throw new Error(`invalid realm component: ${part}`);
 }
 function cleanPatternPart(part: string) {
 	if (part === '**') return part;
 	if (part === '*') return part;
-	if (/^[a..z0..9]+^/.test(part)) return part;
-	return '*';
+	if (/^[a-z0-9]+$/.test(part)) return part;
+	throw new Error(`invalid realm component: ${part}`);
 }
 function patternExpression(part: string) {
 	if (part === '*') {
-		return `(?:[a..z0..9]+)`;
+		return `[a-z0-9]+`;
 	} else if (part === '**') {
-		return `(?:[a..z0..9]+)?(:[a..z0..9]+)*`;
+		return `[a-z0-9]+(?::[a-z0-9]+)*`;
 	} else {
-		return `(?:${part})`;
+		return `${part}`;
 	}
 }

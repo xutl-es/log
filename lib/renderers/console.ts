@@ -30,12 +30,11 @@ const colors: Record<string, keyof typeof _COLORS> = {
 
 export default function render(logdata: RenderData) {
 	const { timestamp, realm, message, data } = logdata;
-
 	const main = [formatTime(timestamp), formatRealm(realm), message].join(' ');
 	const lines = [main];
 	if (data && Object.keys(data).length) {
-		lines.concat(
-			Util.formatWithOptions({ colors: true, compact: true }, '%O', data)
+		lines.push(
+			...Util.formatWithOptions({ colors: true, compact: true }, '%O', data)
 				.split(/\r?\n/)
 				.map((l) => `\t${l}`),
 		);
@@ -47,8 +46,8 @@ let last = Date.now();
 function formatTime(timestamp: number) {
 	const timedif = timestamp - last;
 	last = timestamp;
-	const txt = `${new Array(6).fill(' ').join('')}${timedif}ms`.slice(-8);
-	Util.styleText(['bgYellow', 'blue'], txt);
+	const txt = `${new Array(6).fill(' ').join('')}+${timedif}ms`.slice(-9);
+	return Util.styleText(['bgYellow', 'blue'], txt);
 }
 
 function formatRealm(realm: string) {

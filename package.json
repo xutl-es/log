@@ -6,6 +6,7 @@
 	"export": "./lib/index.js",
 	"types": "./lib/index.d.ts",
 	"scripts": {
+		"test": "node --experimental-strip-types --test",
 		"format": "biome format --write lib package.json tsconfig.json biome.json",
 		"lint": "biome lint --write lib",
 		"build": "tsc --build --force",
