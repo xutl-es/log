@@ -90,11 +90,11 @@ export class Logger<Meta extends MetaData> {
 
 	static define<Meta extends MetaData>(metadata: Meta, cfg: LoggerConfig = {}) {
 		const logger = new Logger(metadata);
-		for (const [pattern, { format = 'JSONLog', destination, mode = 'STREAM', options }] of Object.entries({
+		for (const [pattern, { format = 'JSONLog', destination, mode, options }] of Object.entries({
 			...DefaultConfig,
 			...cfg,
 		})) {
-			logger.add(pattern, destination, new Format(Formats[format], options), LogPipe[mode]);
+			logger.add(pattern, destination, new Format(Formats[format], options), mode);
 		}
 		return logger;
 	}
