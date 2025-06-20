@@ -1,0 +1,31 @@
+{
+	"name": "@xutl/log",
+	"version": "0.0.0",
+	"description": "Logging Utility",
+	"type": "module",
+	"export": "./lib/index.js",
+	"types": "./lib/index.d.ts",
+	"scripts": {
+		"format": "biome format --write lib package.json tsconfig.json biome.json",
+		"lint": "biome lint --write lib",
+		"build": "tsc --build --force",
+		"prepublishOnly": "npm run build",
+		"postversion": "git push --follow-tags"
+	},
+	"bin": {
+		"log": "./dist/merge.js"
+	},
+	"files": ["README.md", "dist/**/*.js", "dist/**/*.d.ts"],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pipobscure/piplog.git"
+	},
+	"keywords": ["logging"],
+	"contributors": ["Philipp Dunkel <pip@pipobscure.com>"],
+	"license": "ISC",
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@types/node": "^24.0.1",
+		"typescript": "^5.8.3"
+	}
+}
