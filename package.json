@@ -3,8 +3,11 @@
 	"version": "0.0.0",
 	"description": "Logging Utility",
 	"type": "module",
-	"export": "./lib/index.js",
-	"types": "./lib/index.d.ts",
+	"main": "./lib/index.js",
+	"exports": {
+		"default": "./lib/index.js",
+		"types": "./lib/index.d.ts"
+	},
 	"scripts": {
 		"test": "node --experimental-strip-types --no-warnings --test",
 		"format": "biome format --write lib package.json tsconfig.json biome.json",
